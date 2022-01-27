@@ -1,50 +1,45 @@
 import java.util.*;
 import java.io.*;
-import java.lang.*;
 
 class GFG
-{
-    public static void main(String args[])
-    {
-        //Taking input using class Scanner 
-        Scanner sc = new Scanner(System.in);
-        
-        //Taking the number of testcases
-        int t = sc.nextInt();
-        
-        while(t-- > 0)
-        {
-            //taking the range
-            int n = sc.nextInt();
-            
-            //creating an ArrayList
-            ArrayList<String> res = new ArrayList<String>();
-            
-            //calling the generate method of class solve
-            //and storing the result in an ArrayList
-            res = new solve().generate(n);
-            
-            //printing all the elements of the ArrayList
-            for(int i = 0;i<res.size();i++)
-                System.out.print(res.get(i) + " ");
-            System.out.println();
-        }
-    }
+ {
+	public static void main (String[] args)
+	 {
+	  
+	  //taking input using Scanner class
+	  Scanner sc = new Scanner(System.in);
+	  
+	  //taking count of testcases
+	  int t = sc.nextInt();
+	  while(t-- > 0){
+	      
+	      //taking count of houses
+	      int n = sc.nextInt();
+	      int arr[] = new int[n];
+	      
+	      //inserting money present in 
+	      //each house in the array
+	      for(int i = 0; i<n; ++i)
+	           arr[i] = sc.nextInt();
+  	      
+  	      //calling method FindMaxSum() of class solve
+  	      System.out.println(new Solution().FindMaxSum(arr, n));
+	 }
+   }
 }// } Driver Code Ends
 
 
-
-
-class solve{
-    
-     static ArrayList<String> generate(int N)
+class Solution
+{
+    //Function to find the maximum money the thief can get.
+    public int FindMaxSum(int arr[], int n)
     {
-        ArrayList<String> s = new ArrayList<>();
-       for(int i=1 ;i<=N;i++)
-       {
-           s.add(Integer.toBinaryString(i));
-       }
-       return s;
+        int[] b = new int[n];
+      if(n==1) return arr[0];
+      if(n==2) return Math.max(arr[0],arr[1]);
+      b[0] = arr[0];
+      b[1] = Math.max(arr[0],arr[1]);
+      for(int i = 2;i<n;i++) b[i] = Math.max(b[i-1],b[i-2]+arr[i]);
+      return b[n-1];
     }
-    
 }

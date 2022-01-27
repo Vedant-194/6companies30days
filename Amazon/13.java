@@ -1,143 +1,51 @@
-//Initial Template for Java
-
-
-import java.util.LinkedList;
-import java.util.Queue;
-import java.io.*;
-import java.util.*;
-
-class Node {
-	int data;
-	Node left;
-	Node right;
-
-	Node(int data) {
-		this.data = data;
-		left = null;
-		right = null;
-	}
-}
-
-class GfG {
-
-	static Node buildTree(String str) {
-
-		if (str.length() == 0 || str.charAt(0) == 'N') {
-			return null;
-		}
-
-		String ip[] = str.split(" ");
-		Node root = new Node(Integer.parseInt(ip[0]));
-		Queue<Node> queue = new LinkedList<>();
-
-		queue.add(root);
-		int i = 1;
-		while (queue.size() > 0 && i < ip.length) {
-			Node currNode = queue.peek();
-			queue.remove();
-			String currVal = ip[i];
-			if (!currVal.equals("N")) {
-				currNode.left = new Node(Integer.parseInt(currVal));
-				queue.add(currNode.left);
-			}
-			i++;
-			if (i >= ip.length)
-				break;
-
-			currVal = ip[i];
-
-			if (!currVal.equals("N")) {
-
-				currNode.right = new Node(Integer.parseInt(currVal));
-
-				queue.add(currNode.right);
-			}
-			i++;
-		}
-
-		return root;
-	}
-
-	static void printInorder(Node root) {
-		if (root == null)
-			return;
-
-		printInorder(root.left);
-		System.out.print(root.data + " ");
-
-		printInorder(root.right);
-	}
-
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-		int t = Integer.parseInt(br.readLine());
-
-		while (t > 0) {
-			String s = br.readLine();
-			int target = Integer.parseInt(br.readLine());
-			Node root = buildTree(s);
-
-			Solution g = new Solution();
-			System.out.println(g.minTime(root, target));
-			t--;
-
-		}
-	}
-}
-
-class Solution
-{
-   public static boolean rootPath(Node node , int target , ArrayList<Node> path){
-        
-        if(node == null) return false;
-        
-        if(node.data == target){
-            path.add(node);
-            return true;
+class Solution {
+    public int orangesRotting(int[][] grid) {
+        Queue<int[]> que = new LinkedList<>();
+        int fresh = 0;
+        for(int i = 0; i<grid.length; i++){
+            for(int j = 0; j<grid[0].length; j++){
+                if(grid[i][j]==2)
+                    que.offer(new int[]{i,j});
+                if(grid[i][j]==1)
+                    fresh++;
+            }
         }
-        
-        boolean L = rootPath(node.left , target , path);
-        boolean R = rootPath(node.right , target , path);
-        
-        if( L|| R){
-            path.add(node);
-            return true;
+        if(fresh==0)
+            return 0;
+        int l, t=0;
+        int r,c;
+        while(!que.isEmpty()){
+            l = que.size();
+            while(l>0){
+                r=que.peek()[0];
+                c=que.peek()[1];
+                que.poll();
+                
+                if(r<grid.length-1 && grid[r+1][c]==1){
+                    grid[r+1][c]=2;
+                    fresh--;
+                    que.offer(new int[]{r+1,c});
+                }
+                if(c<grid[0].length-1 && grid[r][c+1]==1){
+                    grid[r][c+1]=2;
+                    fresh--;
+                    que.offer(new int[]{r,c+1});
+                }
+                if(r>0 && grid[r-1][c]==1){
+                    grid[r-1][c]=2;
+                    fresh--;
+                    que.offer(new int[]{r-1,c});
+                }
+                if(c>0 && grid[r][c-1]==1){
+                    grid[r][c-1]=2;
+                    fresh--;
+                    que.offer(new int[]{r,c-1});
+                }
+                l--;
+            }
+            t++;
         }
-        
-        return false;
-    }
-    static int timer;
-    
-    public static int minTime(Node root, int target) 
-    {
-        ArrayList<Node> path = new ArrayList<>();
-        
-        timer = 0;
-        int burntime = 0;
-        rootPath(root, target , path);
-        
-        for(int i=0 ; i< path.size(); i++){
-            
-            Node node = path.get(i);
-            Node block = i > 0 ? path.get(i-1):null;
-            
-            BurnTree(node ,block , burntime);
-            
-            burntime++;
-        }
-        
-        return timer;
-     
-    }
-    public static void BurnTree(Node node , Node block , int btime){
-        
-        if(node == null) return;
-        
-        timer= Math.max(timer , btime);
-        
-        if(node.left != block) BurnTree(node.left , block , btime + 1);
-        if(node.right != block) BurnTree(node.right , block , btime + 1);
-        
-    }
-}
+        if(fresh>0)
+            return -1;
+        return t-1;
+    }}
